@@ -35,3 +35,12 @@ pub struct GenCopy {
     #[parent_field]
     pub common: CommonPlan,
 }
+
+#[derive(HasSpaces)]
+pub struct ABadSpace {
+    #[parent_field]
+    pub common1: CommonPlan,
+    // The following should produce a nice error message
+    //#[parent_field]
+    //pub common2: CommonPlan,
+}
