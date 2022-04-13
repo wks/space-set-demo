@@ -1,9 +1,9 @@
-use crate::spaces::SimpleSpace;
+use crate::spaces::{SimpleSpace, Space};
 use mmtk_macros::HasSpaces;
 
 pub trait HasSpaces {
-    //fn find_space_dyn(&self, addr: usize) -> Option<&dyn Space>;
     fn trace_object(&self, addr: usize) -> usize;
+    fn find_space_dyn(&self, addr: usize) -> Option<&dyn Space>;
 }
 
 #[derive(HasSpaces)]

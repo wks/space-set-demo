@@ -20,7 +20,7 @@ impl Space for SimpleSpace {
     }
 
     fn trace_object(&self, objref: usize) -> usize {
-        println!("Tracing {:x} in {}...", objref, self.name);
+        println!("Tracing 0x{:x} in {}...", objref, self.name);
         objref
     }
 }

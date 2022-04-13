@@ -47,8 +47,8 @@ fn get_unique_field_with_attribute<'f>(
 }
 
 fn generate_trace_object<'a>(
-    space_fields: Vec<&'a Field>,
-    parent_field: Option<&'a Field>,
+    space_fields: &[&'a Field],
+    parent_field: &Option<&'a Field>,
 ) -> TokenStream {
     let space_field_handler = space_fields.iter().map(|f| {
         let f_ident = f.ident.as_ref().unwrap();
@@ -79,6 +79,39 @@ fn generate_trace_object<'a>(
     }
 }
 
+fn generate_find_space_dyn<'a>(
+    space_fields: &[&'a Field],
+    parent_field: &Option<&'a Field>,
+) -> TokenStream {
+    let space_field_handler = space_fields.iter().map(|f| {
+        let f_ident = f.ident.as_ref().unwrap();
+        quote! {
+            if self.#f_ident.is_in_space(__mmtk_objref) {
+                return ::std::option::Option::Some(&self.#f_ident);
+            }
+        }
+    });
+
+    let parent_field_delegator = if let Some(f) = parent_field {
+        let f_ident = f.ident.as_ref().unwrap();
+        quote! {
+            self.#f_ident.find_space_dyn(__mmtk_objref)
+        }
+    } else {
+        quote! {
+            ::std::option::Option::None
+        }
+    };
+
+    quote! {
+        fn find_space_dyn(&self, __mmtk_objref: usize) -> Option<&dyn crate::spaces::Space> {
+            use crate::spaces::Space;
+            #(#space_field_handler)*
+            #parent_field_delegator
+        }
+    }
+}
+
 pub(crate) fn has_spaces(input: DeriveInput) -> TokenStream {
     let ident = input.ident;
 
@@ -90,11 +123,13 @@ pub(crate) fn has_spaces(input: DeriveInput) -> TokenStream {
         let space_fields = get_fields_with_attribute(fields, "space_field");
         let parent_field = get_unique_field_with_attribute(fields, "parent_field");
 
-        let trace_object_function = generate_trace_object(space_fields, parent_field);
+        let trace_object_function = generate_trace_object(&space_fields, &parent_field);
+        let find_space_dyn_function = generate_find_space_dyn(&space_fields, &parent_field);
 
         quote! {
             impl crate::plans::HasSpaces for #ident {
                 #trace_object_function
+                #find_space_dyn_function
             }
         }
     } else {
