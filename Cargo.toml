@@ -1,0 +1,8 @@
+[package]
+name = "space-set-demo"
+version = "0.1.0"
+edition = "2021"
+description = "proof-of-concept demo for generating trace_object using macros for mmtk-core"
+
+[dependencies]
+mmtk-macros = { path = "./mmtk-macros" }
