@@ -36,11 +36,30 @@ pub struct GenCopy {
     pub common: CommonPlan,
 }
 
-#[derive(HasSpaces)]
-pub struct ABadSpace {
-    #[parent_field]
-    pub common1: CommonPlan,
-    // The following should produce a nice error message
-    //#[parent_field]
-    //pub common2: CommonPlan,
+#[cfg(feature = "bad-examples")]
+mod bad_plans {
+    use crate::plans::CommonPlan;
+    use crate::spaces::SimpleSpace;
+    use mmtk_macros::HasSpaces;
+
+    #[derive(HasSpaces)]
+    pub struct BadPlan1 {
+        // Duplicated attributes
+        #[space_field]
+        #[space_field]
+        space1: SimpleSpace,
+    }
+
+    #[derive(HasSpaces)]
+    pub struct BadPlan2 {
+        #[parent_field]
+        pub common1: CommonPlan,
+        // Duplicated parent
+        #[parent_field]
+        pub common2: CommonPlan,
+    }
+
+    // Tuple-like struct
+    #[derive(HasSpaces)]
+    pub struct TupleStruct(i32, i64);
 }

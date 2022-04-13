@@ -3,5 +3,9 @@ name = "space-set-demo"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = []
+bad-examples = []
+
 [dependencies]
 mmtk-macros = { path = "./mmtk-macros" }

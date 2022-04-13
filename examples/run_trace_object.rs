@@ -1,10 +1,7 @@
-use crate::{
+use space_set_demo::{
     plans::{BasePlan, CommonPlan, GenCopy, HasSpaces},
     spaces::SimpleSpace,
 };
-
-mod plans;
-mod spaces;
 
 fn main() {
     let plan = GenCopy {
